@@ -19,6 +19,10 @@ This pulls the content from Sharepoint in many steps, with the intent of it bein
 
 ## Steps
 
+There are a lot of steps that the user must perform to get this to work. I would have preferred to write this such that you type one command into the command line and wait for it to churn through, but unfortunately Windows, PHP, libcurl, LibreOffice and Perl hate me.
+
+**Note: Right now this code does not work, as I'm refactoring many individual scripts into a cohesive project. All the required files are there, but I changed file names and moved some things around so references are probably broken.**
+
 1. (incomplete) Get list of Sharepoint Wiki pages
   1. For now doing this manually, using Chrome JS console and the JS in get-sp-pages.js
   2. Write to "./output/1-sp-pages.json"
