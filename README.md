@@ -14,7 +14,7 @@ This pulls the content from Sharepoint in many steps, with the intent of it bein
 4. VirtualBox (or equivalent) with Linux installation (I used Ubuntu 12.04) and:
   1. Perl with HTML-WikiConverter
   2. LibreOffice installed, with "soffice" in path
-5. 
+5. A stout heart, lots of profanity, and a strong desire to abandon Sharepoint
 
 ## Steps
 
