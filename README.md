@@ -3,9 +3,10 @@ Sharepoint-to-MediaWiki
 
 Pull content out of Sharepoint wiki for insertion into MediaWiki
 
-Before you go any further, a warning: This is freakin' insane. It may be the ugliest, kludgiest thing I've ever created. To get this working on my Windows 7 laptop I had to stitch together...???
+Before you go any further, a warning: This is freakin' insane. It may be the ugliest, kludgiest thing I've ever created. To get this working on my Windows 7 laptop I had to stitch together PHP, PhantomJS, AJAX to mimic what couldn't be done on the command line, a virtual machine, Perl, and I through in some Python because why not...
 
-This pulls the content from Sharepoint in many steps, with the intent of it being modular. Some people may not require certain steps, or may want to 
+This pulls the content from Sharepoint in many steps, with the intent of it being modular. Some people may not require certain steps, or may want to add different post-processing. Enjoy!
+
 
 ## Requirements
 1. Windows 7
@@ -14,7 +15,7 @@ This pulls the content from Sharepoint in many steps, with the intent of it bein
 4. VirtualBox (or equivalent) with Linux installation (I used Ubuntu 12.04) and:
   1. Perl with HTML-WikiConverter
   2. LibreOffice installed, with "soffice" in path
-5. A stout heart, lots of profanity, and a strong desire to abandon Sharepoint
+5. A strong desire to abandon Sharepoint
 
 ## Steps
 
@@ -27,7 +28,7 @@ This pulls the content from Sharepoint in many steps, with the intent of it bein
   3. Could not use PHP on command line with cURL, which is perhaps a Windows issue
   4. Could not use PHP with cURL and NTLM on Linux at all, unless you downgraded to an earlier version of libcurl.
   5. Write each HTML file to "./output/2-sp-html" directory
-3. Use PhantomJS to:
+3. Use PhantomJS by running command "phantomjs 3-analyze-pages.js":
   1. Get just the HTML of the content portion of the Sharepoint page
   2. To each intra-wiki link, prepend "/INTERNAL-WIKI-LINK" so those links can be turned into internal links later (i.e. [[My Link]] instead of [http://example.com/page1 My Link])
   3. Do the same for intra-wiki links to files, except using "/INTERNAL-WIKI-FILE-LINK"
@@ -39,20 +40,20 @@ This pulls the content from Sharepoint in many steps, with the intent of it bein
   3. Again, could not use command line PHP with cURL
   4. If have to use this no-command-line workaround, should write this step into the previous browser-as-a-command-line step
   5. Save each image to "./output/4-images" directory
-4. IN A LINUX VIRTUAL MACHINE, run convert-to-wiki.py, which:
+5. IN A LINUX VIRTUAL MACHINE, run 5-convert-to-wiki.py, which:
   1. Uses LibreOffice command line to convert HTML-to-HTML. That is, it takes ugly Microsoft HTML and converts into something cleaner.
   2. Uses the Perl HTML-WikiConverter to turn HTML into MediaWiki wikitext.
   3. The intermediate files from LibreOffice are written to "./output/5-libre-wiki-html"
   4. The MediaWiki files are written to "./output/6-wiki-files"
   5. The files need to be moved back and forth between host and client OS unless you setup a shared folder that both OSs can write to
-5. MOVE FILES BACK TO WINDOWS, run post-process-cli.php
+6. MOVE FILES BACK TO WINDOWS, run post-process-cli.php
   1. Removes <font> tags, which generally make the output look like crap. They make some fonts giant, some small. Ideally I'd like to leave behind <font color="..."> where applicable, but I'm not smart enough on RegExps for that. Mostly I didn't know how to leave behind the matching </font>.
   2. Converts links that should be internal wiki links to double-bracket links
   3. Removes all "style='...'", since this is generally unnecessary and makes the wikitext really bloated
   4. Add class="wikitable" to all tables (required once you strip style="...")
   5. Convert any single-line bold text to a level-3 header
   6. Save new files to "./output/7-wiki-files-final"
-6. Push images and pages to your wiki with push-to-wiki.php ON THE COMMAND LINE.
+7. Push images and pages to your wiki with push-to-wiki.php ON THE COMMAND LINE.
   1. Edit this file to point to your wiki
   2. It calls the maintenance scripts importTextFile.php and importImages.php
 
