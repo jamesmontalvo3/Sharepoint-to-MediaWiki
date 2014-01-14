@@ -3,7 +3,7 @@ Sharepoint-to-MediaWiki
 
 Pull content out of Sharepoint wiki for insertion into MediaWiki
 
-Before you go any further, a warning: This is freakin' insane. It may be the ugliest, kludgiest thing I've ever created. To get this working on my Windows 7 laptop I had to stitch together PHP, PhantomJS, AJAX to mimic what couldn't be done on the command line, a virtual machine, Perl, and I threw in some Python because why not...
+Before you go any further, a warning: This is freakin' insane. It is the ugliest, kludgiest thing I've ever created. To get this working on my Windows 7 laptop I had to stitch together PHP, PhantomJS, command line mimicked in the browser via AJAX, a virtual machine, Perl, and I threw in some Python because...because at that point why the hell not...
 
 This pulls the content from Sharepoint in many steps, with the intent of it being modular. Some people may not require certain steps, or may want to add different post-processing. At some point I'd like to make it into a MediaWiki extension.
 
