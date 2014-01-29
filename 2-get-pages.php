@@ -40,7 +40,7 @@
 		
 		$(document).ready(function(){
 			disp("Fetching list of pages");
-			$.getJSON("sp-pages.json",function(data){
+			$.getJSON("usr/sp-pages.json",function(data){
 				disp("List of pages retrieved");
 				window.pages = reformatPagesArray(data);
 				getNextPage();

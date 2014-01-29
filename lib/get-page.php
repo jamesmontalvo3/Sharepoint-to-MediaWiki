@@ -10,15 +10,15 @@ echo "<li><a href='$url'>$page</a>";
 $cookie_file_path = dirname(__FILE__) . $path_sep . 'cookies.txt';
 $ch = curl_init();
 
-$username = "ejmontal";
-require "pw.php"; //sets password in another file so I don't have to keep it up on my screens
+$user_agent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36";
 
-// $user_agent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36";
-$user_agent = "EVA Web Robot";
 
-// $url = "https://mod2.jsc.nasa.gov/wiki/fetch/index.php";
-// $url = "https://modspops.jsc.nasa.gov/MOD/DX/DX22/MSSDOC/ROBOpedia/Wiki%20Pages/TUS%20Cable.aspx";
-// $url = "https://modspops.jsc.nasa.gov/MOD/DX/DX22/MSSDOC/ROBOpedia/Wiki%20Pictures/TUS_Cable_Photo.jpg";
+/**
+ *  The following sets the $username and $password
+ *  You can also set the $user_agent value to something like 
+ *  "Sharepoint Thief" if that makes you happy.
+ **/
+require "../usr/cURL_credentials.php";
 
 //==========================================================================
 curl_setopt($ch, CURLOPT_USERPWD, $username. ':' . $password);
@@ -42,19 +42,7 @@ try {
 } catch (Exception $e) {
 	die("Curl failed: " . $e->getMessage() );
 }
-//header('Content-type:image/jpg');
-//echo $ret; // page content
-
 file_put_contents("./raw-html/$page.html", $ret, FILE_USE_INCLUDE_PATH); 
-
-// try {
-	// if( shell_exec( 'phantomjs C:/xampp/htdocs/curl/clean.js "' . $page . '.html"' ) )
-		// echo " - PhantomJS success";
-	// else
-		// echo " - PhantomJS failure";
-// } catch (Exception $e) {
-	// echo "PhantomJS failed on $page with message: " . $e->getMessage();
-// }
 
 echo " - " . date("H:i:s", time());
 echo "</li>";
