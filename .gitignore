@@ -1,3 +1,4 @@
 output/*
 usr/*
 !usr/README.md
+LocalSettings.php

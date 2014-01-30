@@ -1,4 +1,5 @@
 <?php
+require "../LocalSettings.php";
 
 $url = $_GET['url'];
 $filename = explode("/", $url);
@@ -15,7 +16,6 @@ if ( strpos($url, "http") !== 0 ) {
 
 
 require_once "Sharepoint_cURL.php";
-require "../usr/cURL_credentials.php";
 $ch = new Sharepoint_cURL(
 	$url,
 	$loginDomain . "/" . $loginUser . ":" . $loginPass

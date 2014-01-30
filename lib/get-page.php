@@ -1,4 +1,6 @@
 <?php
+require "../LocalSettings.php";
+
 $url = $_GET['url'];
 $page = $_GET['page'];
 
@@ -15,7 +17,6 @@ $user_agent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, li
  **/
  
 require_once "Sharepoint_cURL.php";
-require "../usr/cURL_credentials.php";
 $ch = new Sharepoint_cURL(
 	$url,
 	$loginDomain . "/" . $loginUser . ":" . $loginPass
