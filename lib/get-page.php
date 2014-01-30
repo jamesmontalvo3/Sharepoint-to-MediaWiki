@@ -38,8 +38,9 @@ file_put_contents("../usr/2-raw-html/$page.html", $pageHTML, FILE_USE_INCLUDE_PA
 
 
 $response = array(
-	"message" => "<li><a href='$url'>$page</a> - Raw HTML received " . date("H:i:s", time()) . "</li>",
-//	"pageHTML" => $pageHTML,
+	"pagetitle" => $page,
+	"message" => "<a href='$url'>$page</a> - Raw HTML received - " . date("H:i:s", time()),
+	"pageHTML" => $pageHTML,
 );
 
 echo json_encode($response);
