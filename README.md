@@ -11,11 +11,10 @@ This pulls the content from Sharepoint in many steps, with the intent of it bein
 ## Requirements
 1. Windows 7
 2. Web server with PHP (I used XAMPP)
-3. PhantomJS
-4. VirtualBox (or equivalent) with Linux installation (I used Ubuntu 12.04) and:
+3. VirtualBox (or equivalent) with Linux installation (I used Ubuntu 12.04) and:
   1. Perl with HTML-WikiConverter
   2. LibreOffice installed, with "soffice" in path
-5. A strong desire to abandon Sharepoint
+4. A strong desire to abandon Sharepoint
 
 ## Steps
 
@@ -26,25 +25,19 @@ There are a lot of steps that the user must perform to get this to work. I would
 1. (incomplete) Get list of Sharepoint Wiki pages
   1. For now doing this manually, using Chrome JS console and the JS in get-sp-pages.js
   2. Write to "./output/1-sp-pages.json"
-2. Get HTML of each page
-  1. Web page with AJAX requests to "get-page.php"
-  2. get-page.php uses cURL and NTLM to get page
-  3. Could not use PHP on command line with cURL, which is perhaps a Windows issue
-  4. Could not use PHP with cURL and NTLM on Linux at all, unless you downgraded to an earlier version of libcurl.
-  5. Write each HTML file to "./output/2-sp-html" directory
-3. Use PhantomJS by running command "phantomjs 3-analyze-pages.js":
-  1. Get just the HTML of the content portion of the Sharepoint page
-  2. To each intra-wiki link, prepend "/INTERNAL-WIKI-LINK" so those links can be turned into internal links later (i.e. [[My Link]] instead of [http://example.com/page1 My Link])
-  3. Do the same for intra-wiki links to files, except using "/INTERNAL-WIKI-FILE-LINK"
-  4. Create a list of all images used on all pages and write that list to "./output/4-images.txt"
-  5. Write the wiki content of each page to "./output/3-sp-wiki-html" directory
-4. Download all images using get-images.php
-  1. Navigate to something like http://localhost/Sharepoint-to-MediaWiki/get-images.php
-  2. Web page with AJAX requests to "get-image.php"
-  3. Again, could not use command line PHP with cURL
-  4. If have to use this no-command-line workaround, should write this step into the previous browser-as-a-command-line step
-  5. Save each image to "./output/4-images" directory
-5. IN A LINUX VIRTUAL MACHINE, run 5-convert-to-wiki.py, which:
+2. Get the HTML and images from Sharepoint
+  1. Navigate to the file "2-get-content.php" in your web browser.
+  2. This will run many commands via AJAX requests
+  3. HTTP requests to get-page.php uses cURL and NTLM to get pages from Sharepoint
+    1. Could not use PHP on command line with cURL, which is perhaps a Windows issue
+    2. Could not use PHP with cURL and NTLM on Linux at all, unless you downgraded to an earlier version of libcurl.
+  4. HTML of each pages is sent back to your browser, where:
+    1. The fluff is cropped out, and only the relevant wiki content is kept
+	2. Each link in the content is marked with /INTERNAL-WIKI-LINK or /INTERNAL-WIKI-FILE-LINK so proper wiki links can be created later
+	2. The content is sent back to your webserver and saved as a .html file
+    3. URLs of each image are recorded for later download
+  5. Once all HTML is saved to the server, all images are downloaded
+3. IN A LINUX VIRTUAL MACHINE, run 5-convert-to-wiki.py, which:
   1. Uses LibreOffice command line to convert HTML-to-HTML. That is, it takes ugly Microsoft HTML and converts into something cleaner.
   2. Uses the Perl HTML-WikiConverter to turn HTML into MediaWiki wikitext.
   3. The intermediate files from LibreOffice are written to "./output/5-libre-wiki-html"
