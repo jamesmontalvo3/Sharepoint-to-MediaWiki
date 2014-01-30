@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
+  <?php $title = "Sharepoint-to-MediaWiki";?>
   <head>
+    <title><?php echo $title; ?></title>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 	<script>
 		window.pageNum = 0;
@@ -19,11 +21,11 @@
 				
 		function getNextPage () {
 			disp("Processing page #" + pageNum + ": " + pages[pageNum].page);
-			$.get(
+			$.getJSON(
 				"lib/get-page.php",
 				{ url : pages[pageNum].url, page : pages[pageNum].page },
-				function (data) {
-					$("#container").append(data);
+				function (response) {
+					$("#container").prepend(response.message);
 					
 					pageNum++;
 				
@@ -31,7 +33,8 @@
 						getNextPage();
 					}
 					else {
-						alert("Operation Complete");
+						disp("<span style='font-size:20px;color:green;font-weight:bold;'>Operations Complete!!!</span>");
+						setTimeout(function(){ alert("Operations Complete");}, 100);
 					}
 				}
 			);
@@ -55,7 +58,7 @@
 	</style>
   </head>
   <body>
-    <h1>Sharepoint Grabber</h1>
+    <h1><?php echo $title; ?></h1>
 	<div id="current"></div>
     <ul id="container"></ul>
   </body>

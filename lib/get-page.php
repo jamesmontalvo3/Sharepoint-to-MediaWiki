@@ -1,10 +1,17 @@
 <?php
+/**
+ *  This file uses PHP cURL to pull the contents of a particular Sharepoint wiki
+ *  page. 
+ *
+ *
+ **/
+
+
 require "../LocalSettings.php";
 
 $url = $_GET['url'];
 $page = $_GET['page'];
 
-echo "<li><a href='$url'>$page</a>";
 
 
 $user_agent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36";
@@ -21,13 +28,18 @@ $ch = new Sharepoint_cURL(
 	$url,
 	$loginDomain . "/" . $loginUser . ":" . $loginPass
 );
-$ret = $ch->exe();
+$pageHTML = $ch->exe();
 
 
 if (!file_exists('../usr/2-raw-html')) {
     mkdir('../usr/2-raw-html', 0777, true);
 }
-file_put_contents("../usr/2-raw-html/$page.html", $ret, FILE_USE_INCLUDE_PATH); 
+file_put_contents("../usr/2-raw-html/$page.html", $pageHTML, FILE_USE_INCLUDE_PATH); 
 
-echo " - " . date("H:i:s", time());
-echo "</li>";
+
+$response = array(
+	"message" => "<li><a href='$url'>$page</a> - Raw HTML received " . date("H:i:s", time()) . "</li>",
+//	"pageHTML" => $pageHTML,
+);
+
+echo json_encode($response);
