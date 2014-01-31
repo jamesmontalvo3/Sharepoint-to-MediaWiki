@@ -10,7 +10,11 @@ $filename = str_replace("%20", "_", $filename);
 if ( strpos($url, "http") !== 0 ) {
 	$url = "https://modspops.jsc.nasa.gov" . $url;
 } else {
-	echo " - skipped, not local image</li>";
+	$response = array(
+		"message" => "<a href='$url'>$filename</a> - <span style='color:red;'>skipped, not local image</span> - " . date("H:i:s", time()),
+	);
+	echo json_encode($response);
+	exit();
 }
 
 

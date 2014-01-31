@@ -31,10 +31,10 @@ $ch = new Sharepoint_cURL(
 $pageHTML = $ch->exe();
 
 
-if (!file_exists('../usr/2-raw-html')) {
-    mkdir('../usr/2-raw-html', 0777, true);
-}
-file_put_contents("../usr/2-raw-html/$page.html", $pageHTML, FILE_USE_INCLUDE_PATH); 
+// if (!file_exists('../usr/2-raw-html')) {
+    // mkdir('../usr/2-raw-html', 0777, true);
+// }
+// file_put_contents("../usr/2-raw-html/$page.html", $pageHTML, FILE_USE_INCLUDE_PATH); 
 
 
 $response = array(

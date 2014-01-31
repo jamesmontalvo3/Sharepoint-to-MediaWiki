@@ -9,6 +9,11 @@
 		window.pageNum = 0;
 		window.imageNum = 0;
 		window.sharepointImages = {};
+		window.debug = {};
+		window.errors = {
+			pages : [],
+			images : []
+		};
 		
 		function disp (text) {
 			$("#current").html(text);
@@ -39,7 +44,9 @@
 		}
 		
 		function analyzeSharepointpage ( pagetitle, pageHTML ) {
-			
+
+			window.debug.lastPageHTML = pageHTML;
+		
 			var page = spPageAnalyzer.execute(
 				pageHTML,
 				'/MOD/DX/DX22/MSSDOC/ROBOpedia/',
@@ -47,9 +54,21 @@
 				'Wiki%20Pictures/'
 			);
 			
+			if (page === false) {
+				var errormsg = "Problem extracting content from " + pagetitle + ".";
+				window.errors.pages.push(errormsg);
+				writeLine(
+					"<span style='font-weight:bold;color:red;'>" + errormsg +
+					" Proceeding to next...</span>"
+				);
+				checkNextPage();
+			}
+				
+			
 			for (var i=0; i<page.images.length; i++) {
 				window.sharepointImages[page.images[i]] = 0; // dummy value for always unique "array"
 			}
+			
 			
 			$.post(
 				"lib/save-sharepoint-content.php",
@@ -57,23 +76,36 @@
 					pagecontent : page.content },
 				function(response) {
 					writeLine(response.message);
-				
-					if (pages[pageNum]) {
-						getNextPage();
-					}
-					else {
-						writeLine("<span style='font-weight:bold;'>Page retrieval and cropping complete!</span>");
-						disp("Page retrieval and cropping complete!");
-						processImages();
-					}
+					checkNextPage();
 				},
 				"json"
 			);
 			
 		}
 		
+		function checkNextPage () {
+			if (pages[pageNum]) {
+				getNextPage();
+			}
+			else {
+				writeLine("<span style='font-weight:bold;'>Page retrieval and cropping complete!</span>");
+				disp("Page retrieval and cropping complete!");
+				processImages();
+			}
+		}
+		
 		function writeLine ( msg ) {
 			$("#container").prepend("<li>" + msg + "</li>");
+		}
+		
+		function writeError ( msg, type ) {
+			$("#container").prepend("<li style='font-weight:bold;color:red;'>" + msg + "</li>");
+			if (type == "page")
+				window.errors.pages.push(msg);
+			else if (type == "image")
+				window.errors.images.push(msg);
+			else
+				alert( "coding error: incorrect error type" ); // sloppy
 		}
 		
 		function processImages () {			
@@ -93,7 +125,11 @@
 				"lib/get-image.php",
 				{ url : sharepointImages[imageNum] },
 				function (response) {
-					writeLine(response.message);
+					if ( response.message )
+						writeLine(response.message);
+					else {
+						writeError("Problem processing image #" + imageNum + ": " + sharepointImages[imageNum]);
+					}
 					
 					imageNum++;
 				
@@ -102,10 +138,37 @@
 					}
 					else {
 						disp("<span style='font-size:20px;color:green;font-weight:bold;'>Operations Complete!!!</span>");
+						displayErrors();
 						setTimeout(function(){ alert("Operations Complete");}, 100);
 					}
 				}
 			);
+			
+		}
+		
+		function displayErrors() {
+			
+			if (errors.pages.length > 0) {
+				var numErrors = errors.pages.length;
+				var msg = "";	
+				for(var i = 0; i < numErrors; i++) {
+					msg += "<li>" + errors.pages[i] + "</li>";
+				}
+				writeLine("<span style='font-weight:bold;color:red'>" + 
+					numErrors + " error(s) found processing pages.<ul>"
+					+ msg + "</ul></span>");
+			}
+
+			if (errors.images.length > 0) {
+				var numErrors = errors.images.length+1;
+				var msg = "";	
+				for(var i = 0; i < errors.images.length; i++) {
+					msg += "<li>" + errors.images[i] + "</li>";
+				}
+				writeLine("<span style='font-weight:bold;color:red'>" + 
+					numErrors + " error(s) found processing images.<ul>"
+					+ msg + "</ul></span>");
+			}
 			
 		}
 
