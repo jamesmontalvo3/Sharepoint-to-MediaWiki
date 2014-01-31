@@ -9,6 +9,13 @@ wikiHtml = scriptPath + "/usr/sharepoint-content"
 LibreOfficeOutput = scriptPath + "/usr/LibreOfficeOutput"
 WikitextOutput = scriptPath + "/usr/WikitextOutput"
 
+if not os.path.exists(LibreOfficeOutput):
+    os.makedirs(LibreOfficeOutput)
+
+if not os.path.exists(WikitextOutput):
+    os.makedirs(WikitextOutput)
+
+	
 for f in os.listdir(wikiHtml):
 	if f.endswith(".html"):
 		# soffice --headless --convert-to html:HTML /path/to/file.html
