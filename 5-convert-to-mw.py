@@ -4,7 +4,7 @@ from subprocess import call
 import os
 from os.path import join, getsize
 
-scriptPath = os.path.realpath(__file__)
+scriptPath = os.path.dirname(os.path.realpath(__file__))
 wikiHtml = scriptPath + "/usr/sharepoint-content"
 LibreOfficeOutput = scriptPath + "/usr/LibreOfficeOutput"
 WikitextOutput = scriptPath + "/usr/WikitextOutput"
