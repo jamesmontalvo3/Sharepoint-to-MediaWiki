@@ -6,15 +6,13 @@
 
 $scriptPath = dirname(__FILE__);
 $new_files_dir = "$scriptPath/usr/FinalOutput";
-$new_files_dir = "$scriptPath/usr/images";
+$new_images_dir = "$scriptPath/usr/images";
 
-
-$path_to_wiki = "C:/xampp/htdocs/wiki/mod";
+$path_to_wiki = "C:/xampp/htdocs/wiki/robo";
 
 $page_comment = "Robopedia import";
 
 $imageExtensions = "svg png jpg jpeg gif bmp SVG PNG JPG JPEG GIF BMP";
-
 
 
 $files = scandir($new_files_dir);
@@ -56,8 +54,11 @@ foreach($files as $key => $filename) {
 }
 
 
-// import image
-$cmd = "php $path_to_wiki/maintenance/importImages.php --conf $path_to_wiki/LocalSettings.php $new_images_dir $imageExtensions";
-// shell_exec( $cmd );
+echo "\n\n\nWRITING IMAGES...\n";
 
+// import image
+// EXAMPLE:
 //php C:/xampp/htdocs/wiki/oso/maintenance/importImages.php --conf C:/xampp/htdocs/wiki/oso/LocalSettings.php C:/xampp/htdocs/curl/image-test svg png jpg jpeg gif bmp SVG PNG JPG JPEG GIF BMP
+$cmd = "php $path_to_wiki/maintenance/importImages.php --conf $path_to_wiki/LocalSettings.php $new_images_dir $imageExtensions";
+shell_exec( $cmd );
+
