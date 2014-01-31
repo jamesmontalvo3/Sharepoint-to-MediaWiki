@@ -3,8 +3,11 @@
 // $start = 7;
 // $max = 7;
 
-$new_files_dir = "C:/xampp/htdocs/curl/wiki-files-final";
-$new_images_dir = "C:/xampp/htdocs/curl/images";
+
+$scriptPath = dirname(__FILE__);
+$new_files_dir = "$scriptPath/usr/FinalOutput";
+$new_files_dir = "$scriptPath/usr/images";
+
 
 $path_to_wiki = "C:/xampp/htdocs/wiki/mod";
 

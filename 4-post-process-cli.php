@@ -45,21 +45,36 @@ function text_process ($old_text) {
     
 }
 
-$pages = json_decode( file_get_contents("sp-pages.json" , true), true );
+// $pages = json_decode( file_get_contents("sp-pages.json" , true), true );
 
-foreach($pages as $page => $url) {
 
-	$save = file_put_contents(
-		"C:/xampp/htdocs/curl/wiki-files-final/$page.wiki",
-		text_process(
-			file_get_contents("C:/xampp/htdocs/curl/wiki-files/$page.wiki")
-		)
-	);
+$scriptPath = dirname(__FILE__);
+$sourcePath = "$scriptPath/usr/WikitextOutput";
+$outputPath = "$scriptPath/usr/FinalOutput";
 
-	if ($save !== false) {
-		echo "$page.wiki created ($save bytes written)\n";
-	} else {
-		echo "$page.wiki failed to be created\n";
+$pages = scandir($sourcePath);
+
+if (!file_exists($outputPath)) {
+    mkdir($outputPath, 0777, true);
+}
+
+foreach($pages as $index => $filename) {
+
+	if ( pathinfo($filename, PATHINFO_EXTENSION) == "wiki" ) {
+		
+		$save = file_put_contents(
+			"$outputPath/$filename",
+			text_process(
+				file_get_contents("$sourcePath/$filename")
+			)
+		);
+
+		if ($save !== false) {
+			echo "$filename created ($save bytes written)\n";
+		} else {
+			echo "$filename failed to be created\n";
+		}
+	
 	}
 }
 
