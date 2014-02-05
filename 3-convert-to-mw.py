@@ -5,24 +5,11 @@ import os
 from os.path import join, getsize
 
 scriptPath = os.path.dirname(os.path.realpath(__file__))
-wikiHtml = scriptPath + "/usr/sharepoint-content"
-LibreOfficeOutput = scriptPath + "/usr/LibreOfficeOutput"
+LibreOfficeOutput = scriptPath + "/usr/cleanHTML"
 WikitextOutput = scriptPath + "/usr/WikitextOutput"
-
-if not os.path.exists(LibreOfficeOutput):
-    os.makedirs(LibreOfficeOutput)
 
 if not os.path.exists(WikitextOutput):
     os.makedirs(WikitextOutput)
-
-	
-for f in os.listdir(wikiHtml):
-	if f.endswith(".html"):
-		# soffice --headless --convert-to html:HTML /path/to/file.html
-		call(['soffice', '--headless', '--convert-to', 'html:HTML', '-outdir', LibreOfficeOutput, wikiHtml+'/'+f])
-	else:
-		continue
-
 
 for f in os.listdir(LibreOfficeOutput):
 	if f.endswith(".html"):

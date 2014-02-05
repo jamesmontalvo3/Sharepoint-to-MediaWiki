@@ -68,8 +68,7 @@
 			for (var i=0; i<page.images.length; i++) {
 				window.sharepointImages[page.images[i]] = 0; // dummy value for always unique "array"
 			}
-			
-			
+						
 			$.post(
 				"lib/save-sharepoint-content.php",
 				{	pagetitle : pagetitle,
@@ -172,14 +171,47 @@
 			
 		}
 
+		function extractJsonPageListFromHtml ( html ) {
+			var out = [];
+			$(html).find("a").each(function(index,elem){
+				var el = $(elem);
+				out.push({
+					page : el.html()
+						.replace(".aspx","") // trim .aspx of the end
+						.replace("&nbsp;"," "), // yes, Sharepoint has pagenames with &nbsp; in them
+					url : el.attr("href").replace(/ /g, "%20") // URL encode spaces
+
+				});
+			});
+			return out;
+		}
+		
 		
 		$(document).ready(function(){
 			disp("Fetching list of pages");
-			$.getJSON("usr/sp-pages.json",function(data){
-				disp("List of pages retrieved");
-				window.pages = reformatPagesArray(data);
-				getNextPage();
-			});
+			// $.getJSON("usr/sp-pages.json",function(data){
+				// disp("List of pages retrieved");
+				// window.pages = reformatPagesArray(data);
+				// getNextPage();
+			// });
+			
+			$.getJSON(
+				"lib/convert-pages-from-xls.php",
+				{},
+				function(response) {
+					if (response.success) {
+						disp("List of pages retrieved");
+						writeLine(response.message);
+						window.pages = extractJsonPageListFromHtml( response.pageHTML );
+						getNextPage();
+					}
+					else {
+						disp("Operations Aborted: Page retrieval failed");
+						writeError(response.message, "page");
+					}
+				}
+			);
+			
 		});
     </script>
 	<style>
