@@ -12,8 +12,6 @@ require "../LocalSettings.php";
 $url = $_GET['url'];
 $page = $_GET['page'];
 
-$user_agent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36";
-
 
 /**
  *  The following sets the $username and $password
@@ -27,13 +25,6 @@ $ch = new Sharepoint_cURL(
 	$loginDomain . "/" . $loginUser . ":" . $loginPass
 );
 $pageHTML = $ch->exe();
-
-
-// if (!file_exists('../usr/2-raw-html')) {
-    // mkdir('../usr/2-raw-html', 0777, true);
-// }
-// file_put_contents("../usr/2-raw-html/$page.html", $pageHTML, FILE_USE_INCLUDE_PATH); 
-
 
 $response = array(
 	"pagetitle" => $page,

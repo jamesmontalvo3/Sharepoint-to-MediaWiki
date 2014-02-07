@@ -48,12 +48,7 @@
 
 			window.debug.lastPageHTML = pageHTML;
 		
-			var page = spPageAnalyzer.execute(
-				pageHTML,
-				'/MOD/DX/DX22/MSSDOC/ROBOpedia/',
-				'Wiki%20Pages/',
-				'Wiki%20Pictures/'
-			);
+			var page = spPageAnalyzer.execute(pageHTML);
 			
 			if (page === false) {
 				var errormsg = "Problem extracting content from " + pagetitle + ".";
@@ -214,6 +209,10 @@
 
 				});
 			});
+			
+			window.wikiURL = out[0].url.split('/').slice(0,-1).join('/'); // trim off just the filename
+			window.sharepointURL = wikiURL.split('/').slice(0,-1).join('/'); // trim off the wiki folder, leaving the SP folder
+			
 			return out;
 		}
 		
