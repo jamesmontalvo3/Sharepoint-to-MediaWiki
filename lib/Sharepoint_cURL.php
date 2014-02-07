@@ -4,6 +4,8 @@ class Sharepoint_cURL {
 	public $ch;
 	public $url;
 	public $login;
+	public $errno;
+	public $error;
 	public $user_agent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36";
 	
 	public function __construct ($url, $login) {
@@ -31,9 +33,15 @@ class Sharepoint_cURL {
 		} catch (Exception $e) {
 			die("Curl failed: " . $e->getMessage() );
 		}
-
+		
+		$this->errno = curl_errno($this->ch);
+		$this->error = curl_error($this->ch);
+		
+		curl_close($this->ch);
+		
 		return $ret;
 	
 	}
+		
 	
 }

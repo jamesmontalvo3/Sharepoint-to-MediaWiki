@@ -14,6 +14,7 @@
 			pages : [],
 			images : []
 		};
+		window.badimages = [];
 		
 		function disp (text) {
 			$("#current").html(text);
@@ -115,7 +116,25 @@
 		
 			window.sharepointImages = imgs; // overwrite object with array (object used to avoid duplicates)
 		
-			getNextImage();
+			var imageList = JSON.stringify(window.sharepointImages);
+			$.post(
+				"lib/imageRecord.php",
+				{ imageList : imageList },
+				function(response){
+					if (response.message && response.success == true) {
+						writeLine(response.message);
+						getNextImage();
+					}
+					else if (response.message) {
+						writeError(response.message, "image");
+					}
+					else {
+						writeError("Image list not recorded on server", "image");
+					}
+				},
+				"json"
+			);
+		
 		}
 		
 		function getNextImage () {
@@ -124,11 +143,23 @@
 				"lib/get-image.php",
 				{ url : sharepointImages[imageNum] },
 				function (response) {
-					if ( response.message )
-						writeLine(response.message);
-					else {
-						writeError("Problem processing image #" + imageNum + ": " + sharepointImages[imageNum]);
+					var success = false;
+					if ( response.message ) {
+						if ( response.success ) {
+							writeLine(response.message);
+							success = true;
+						}
+						else {
+							writeError(response.message, "image");
+						}
 					}
+					// non-json received
+					else {
+						writeError("Problem processing image #" + imageNum + ": " + sharepointImages[imageNum], "image");
+					}
+					
+					if ( ! success )
+						window.badimages.push(sharepointImages[imageNum]);
 					
 					imageNum++;
 				
