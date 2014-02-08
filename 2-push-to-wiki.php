@@ -3,17 +3,13 @@
 // $start = 7;
 // $max = 7;
 
+require "LocalSettings.php";
 
 $scriptPath = dirname(__FILE__);
 $new_files_dir = "$scriptPath/usr/FinalOutput";
 $new_images_dir = "$scriptPath/usr/images";
 
-$path_to_wiki = "C:/xampp/htdocs/wiki/robo";
-
-$page_comment = "Robopedia import";
-
 $imageExtensions = "svg png jpg jpeg gif bmp SVG PNG JPG JPEG GIF BMP";
-
 
 $files = scandir($new_files_dir);
 foreach($files as $key => $filename) {

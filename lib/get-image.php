@@ -36,7 +36,7 @@ if ($ch->errno > 0 || $ret == "") {
 		$loginDomain . "/" . $loginUser . ":" . $loginPass
 	);
 	$ret = $ch->exe();
-	if (curl_errno($ch) > 0 || $ret == "") {
+	if ($ch->errno > 0 || $ret == "") {
 		$messages[] = "Another error occurred (#{$ch->errno}): {$ch->error}";
 		$messages[] = "Skipping $filename";
 		$messages[] = "URL: $url";
