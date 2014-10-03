@@ -3,6 +3,8 @@ Sharepoint-to-MediaWiki
 
 Pull content out of Sharepoint wiki for insertion into MediaWiki
 
+See also https://github.com/jamesmontalvo3/wikify, which can be used to convert Microsoft Word files to MediaWiki format. The Wikify project is a bit more mature, but both are far from perfect.
+
 ## Requirements
 1. Web server with PHP (I used XAMPP)
 2. Perl (I used Strawberry Perl) with HTML-WikiConverter module and html2wiki in path
