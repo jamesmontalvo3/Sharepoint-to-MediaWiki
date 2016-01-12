@@ -31,17 +31,24 @@ foreach($files as $key => $filename) {
 		// import page
 		$cmd = "php $path_to_wiki/maintenance/importTextFile.php --conf $path_to_wiki/LocalSettings.php ";
 	
-		if ($title)
-			$cmd .= "--title \"$title\" ";
+		if ( $titlePrefix ) {
+			$title = $titlePrefix . $title;
+		}
+
+		$cmd .= "--title \"$title\" ";
+
+		if ( $contributingUser ) {
+			$cmd .= "--user \"$contributingUser\" ";
+		}
 	
 		if ($page_comment)
 			$cmd .= "--comment \"$page_comment\" ";
 			
 		$cmd .= "\"$new_files_dir/$filename\"";
 	
-		// echo "$cmd\n\n";
+		// echo "\n\n$cmd\n\n";
 		shell_exec( $cmd );
-	
+
 	}
 	else {
 		echo " (directory)";

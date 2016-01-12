@@ -5,6 +5,16 @@
     <title><?php echo $title; ?></title>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 	<script type="text/javascript" src="lib/page-analyze.js"></script>
+	<script type="text/javascript">
+		window.sp2mwSettings = <?php 
+		require "LocalSettings.php";
+		echo json_encode(
+			array(
+				'titlePrefix' => $titlePrefix,
+			) 
+		); 
+		?>;
+	</script>
 	<script>
 		window.pageNum = 0;
 		window.imageNum = 0;
@@ -210,8 +220,9 @@
 				});
 			});
 			
-			window.wikiURL = out[0].url.split('/').slice(0,-1).join('/'); // trim off just the filename
-			window.sharepointURL = wikiURL.split('/').slice(0,-1).join('/'); // trim off the wiki folder, leaving the SP folder
+			window.wikiURL = out[0].url.split('/').slice(0,-1).join( '/' ); // trim off just the filename
+			window.wikiURLnoProtocolOrHost = window.wikiURL.replace( /https?:\/\/[^\/\s]+/g, '');
+			window.sharepointURL = wikiURL.split('/').slice(0,-1).join( '/' ); // trim off the wiki folder, leaving the SP folder
 			
 			return out;
 		}

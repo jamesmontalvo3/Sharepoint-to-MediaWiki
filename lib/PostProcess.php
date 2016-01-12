@@ -4,6 +4,12 @@ class PostProcess {
 
 	static public function process ($old_text) {
 
+		global $titlePrefix;
+
+		if ( ! $titlePrefix ) {
+			$titlePrefix = '';
+		}
+
 		// replace HTML breaks with double newlines
 		$new_text = str_replace("<br />", "\n\n", $old_text);
 		
@@ -19,7 +25,7 @@ class PostProcess {
 		// $patterns[2] = "/(\[/INTERNAL-WIKI-LINK)([^\s*])(\s)([^\]*])(\])/";
 		// $replaces[2] = "[[\4]]";
 		$patterns[2] = "/(\[\/INTERNAL-WIKI-LINK)(\S*)(\s+)([^\]]*)(\])/";
-		$replaces[2] = '[[\4]]';
+		$replaces[2] = '[[' . $titlePrefix . '\4]]';
 
 		$patterns[3] = "/%20/";
 		$replaces[3] = " ";
