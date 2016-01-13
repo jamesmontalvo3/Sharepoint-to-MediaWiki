@@ -23,14 +23,14 @@ foreach($files as $key => $filename) {
 		echo " - skipped\n\n";
 		break;
 	}
-	
+
 	if ( is_file($new_files_dir.'/'.$filename) && substr($filename, -4) == 'wiki' ) {
-		$title = substr($filename, 0, -5); // remove ".wiki" 
+		$title = substr($filename, 0, -5); // remove ".wiki"
 		echo " (file) - Wiki filename: $title";
-	
+
 		// import page
 		$cmd = "php $path_to_wiki/maintenance/importTextFile.php --conf $path_to_wiki/LocalSettings.php ";
-	
+
 		if ( $titlePrefix ) {
 			$title = $titlePrefix . $title;
 		}
@@ -40,12 +40,12 @@ foreach($files as $key => $filename) {
 		if ( $contributingUser ) {
 			$cmd .= "--user \"$contributingUser\" ";
 		}
-	
+
 		if ($page_comment)
 			$cmd .= "--comment \"$page_comment\" ";
-			
+
 		$cmd .= "\"$new_files_dir/$filename\"";
-	
+
 		// echo "\n\n$cmd\n\n";
 		shell_exec( $cmd );
 

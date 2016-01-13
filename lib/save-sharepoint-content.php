@@ -3,6 +3,10 @@
  *
  **/
 
+// initialize prior to LocalSettings.php
+$userDefinedPatterns = array();
+$userDefinedReplaces = array();
+
 require "../LocalSettings.php";
 require_once "PostProcess.php";
 
@@ -39,7 +43,7 @@ createDir( $wikitextOutput );
 createDir( $finalOutput );
 
 // Save sharepoint HTML to disk
-file_put_contents("$sharepointHtmlPath/$pagetitle.html", $pagecontent, FILE_USE_INCLUDE_PATH); 
+file_put_contents("$sharepointHtmlPath/$pagetitle.html", $pagecontent, FILE_USE_INCLUDE_PATH);
 
 # Convert to clean HTML using headless LibreOffice
 #
@@ -74,7 +78,9 @@ if ( file_exists( "$wikitextOutput/$pagetitle.wiki" )) {
 $save = file_put_contents(
 	"$finalOutput/$pagetitle.wiki",
 	PostProcess::process(
-		file_get_contents("$wikitextOutput/$pagetitle.wiki")
+		file_get_contents("$wikitextOutput/$pagetitle.wiki"),
+		$userDefinedPatterns,
+		$userDefinedReplaces
 	)
 );
 

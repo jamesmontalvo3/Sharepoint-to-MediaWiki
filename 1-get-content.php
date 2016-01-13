@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<?php header("Content-type: text/html; charset=utf-8"); ?><!DOCTYPE html>
 <html>
   <?php $title = "Sharepoint-to-MediaWiki";?>
   <head>
@@ -6,13 +6,17 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 	<script type="text/javascript" src="lib/page-analyze.js"></script>
 	<script type="text/javascript">
-		window.sp2mwSettings = <?php 
+		window.sp2mwSettings = <?php
 		require "LocalSettings.php";
+		if ( ! isset( $userDefinedWrapperSelector ) ) {
+			$userDefinedWrapperSelector = false;
+		}
 		echo json_encode(
 			array(
 				'titlePrefix' => $titlePrefix,
-			) 
-		); 
+				'userDefinedWrapperSelector' => $userDefinedWrapperSelector,
+			)
+		);
 		?>;
 	</script>
 	<script>
@@ -25,11 +29,11 @@
 			images : []
 		};
 		window.badimages = [];
-		
+
 		function disp (text) {
 			$("#current").html(text);
 		}
-		
+
 		function reformatPagesArray (pages) {
 			var out = [];
 			for(var page in pages) {
@@ -37,8 +41,12 @@
 			}
 			return out;
 		}
-				
+
 		function getNextPage () {
+			if ( window.paused ) {
+				writeLine( "sp2mw is paused." );
+				return;
+			}
 			disp("Processing page #" + pageNum + ": " + pages[pageNum].page);
 			$.getJSON(
 				"lib/get-page.php",
@@ -46,20 +54,20 @@
 				function (response) {
 					writeLine(response.message);
 					pageNum++;
-					
+
 					analyzeSharepointpage( response.pagetitle, response.pageHTML );
-					
+
 				}
 			);
-			
+
 		}
-		
+
 		function analyzeSharepointpage ( pagetitle, pageHTML ) {
 
 			window.debug.lastPageHTML = pageHTML;
-		
+
 			var page = spPageAnalyzer.execute(pageHTML);
-			
+
 			if (page === false) {
 				var errormsg = "Problem extracting content from " + pagetitle + ".";
 				window.errors.pages.push(errormsg);
@@ -69,12 +77,12 @@
 				);
 				checkNextPage();
 			}
-				
-			
+
+
 			for (var i=0; i<page.images.length; i++) {
 				window.sharepointImages[page.images[i]] = 0; // dummy value for always unique "array"
 			}
-						
+
 			$.post(
 				"lib/save-sharepoint-content.php",
 				{	pagetitle : pagetitle,
@@ -85,9 +93,9 @@
 				},
 				"json"
 			);
-			
+
 		}
-		
+
 		function checkNextPage () {
 			if (pages[pageNum]) {
 				getNextPage();
@@ -98,11 +106,11 @@
 				processImages();
 			}
 		}
-		
+
 		function writeLine ( msg ) {
 			$("#container").prepend("<li>" + msg + "</li>");
 		}
-		
+
 		function writeError ( msg, type ) {
 			$("#container").prepend("<li style='font-weight:bold;color:red;'>" + msg + "</li>");
 			if (type == "page")
@@ -112,15 +120,15 @@
 			else
 				alert( "coding error: incorrect error type" ); // sloppy
 		}
-		
-		function processImages () {			
+
+		function processImages () {
 			var imgs = [];
 			for(var im in window.sharepointImages) {
 				imgs[imgs.length] = im;
 			}
-		
+
 			window.sharepointImages = imgs; // overwrite object with array (object used to avoid duplicates)
-		
+
 			var imageList = JSON.stringify(window.sharepointImages);
 			$.post(
 				"lib/imageRecord.php",
@@ -139,9 +147,9 @@
 				},
 				"json"
 			);
-		
+
 		}
-		
+
 		function getNextImage () {
 			disp("Processing image #" + imageNum + ": " + sharepointImages[imageNum]);
 			$.getJSON(
@@ -162,12 +170,12 @@
 					else {
 						writeError("Problem processing image #" + imageNum + ": " + sharepointImages[imageNum], "image");
 					}
-					
+
 					if ( ! success )
 						window.badimages.push(sharepointImages[imageNum]);
-					
+
 					imageNum++;
-				
+
 					if (sharepointImages[imageNum]) {
 						getNextImage();
 					}
@@ -178,33 +186,33 @@
 					}
 				}
 			);
-			
+
 		}
-		
+
 		function displayErrors() {
-			
+
 			if (errors.pages.length > 0) {
 				var numErrors = errors.pages.length;
-				var msg = "";	
+				var msg = "";
 				for(var i = 0; i < numErrors; i++) {
 					msg += "<li>" + errors.pages[i] + "</li>";
 				}
-				writeLine("<span style='font-weight:bold;color:red'>" + 
+				writeLine("<span style='font-weight:bold;color:red'>" +
 					numErrors + " error(s) found processing pages.<ul>"
 					+ msg + "</ul></span>");
 			}
 
 			if (errors.images.length > 0) {
 				var numErrors = errors.images.length+1;
-				var msg = "";	
+				var msg = "";
 				for(var i = 0; i < errors.images.length; i++) {
 					msg += "<li>" + errors.images[i] + "</li>";
 				}
-				writeLine("<span style='font-weight:bold;color:red'>" + 
+				writeLine("<span style='font-weight:bold;color:red'>" +
 					numErrors + " error(s) found processing images.<ul>"
 					+ msg + "</ul></span>");
 			}
-			
+
 		}
 
 		function extractJsonPageListFromHtml ( html ) {
@@ -219,23 +227,41 @@
 
 				});
 			});
-			
+
 			window.wikiURL = out[0].url.split('/').slice(0,-1).join( '/' ); // trim off just the filename
 			window.wikiURLnoProtocolOrHost = window.wikiURL.replace( /https?:\/\/[^\/\s]+/g, '');
 			window.sharepointURL = wikiURL.split('/').slice(0,-1).join( '/' ); // trim off the wiki folder, leaving the SP folder
-			
+
 			return out;
 		}
-		
-		
+
+
 		$(document).ready(function(){
+
+			$("#pause").click( function() {
+				console.log( "CLICKED" );
+
+				// window was paused before clicked, unpause
+				if ( window.paused === true ) {
+					window.paused = false;
+					$("#pause").text( "Pause" );
+					writeLine( "Unpausing..." );
+					getNextPage();
+				}
+				else {
+					window.paused = true;
+					$("#pause").text( "Unpause" );
+					writeLine( "sp2mw is paused, but will finish any processes in-work." );
+				}
+			});
+
 			disp("Fetching list of pages");
 			// $.getJSON("usr/sp-pages.json",function(data){
 				// disp("List of pages retrieved");
 				// window.pages = reformatPagesArray(data);
 				// getNextPage();
 			// });
-			
+
 			$.getJSON(
 				"lib/convert-pages-from-xls.php",
 				{},
@@ -252,7 +278,7 @@
 					}
 				}
 			);
-			
+
 		});
     </script>
 	<style>
@@ -263,7 +289,8 @@
 	</style>
   </head>
   <body>
-    <h1><?php echo $title; ?></h1>
+    <h1><?php echo $title; ?> <button id="pause">Pause</button></h1>
+
 	<div id="current"></div>
     <ul id="container"></ul>
   </body>

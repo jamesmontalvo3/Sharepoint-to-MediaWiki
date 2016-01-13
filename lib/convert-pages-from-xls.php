@@ -11,6 +11,14 @@ $infile = "$usr/pages.xls";
 $outfile = "$usr/pages.html";
 
 
+if ( ! file_exists( $infile ) ) {
+	$infile .= "x"; // make it a .xlsx
+	if ( ! file_exists( $infile ) ) {
+		die( "need a pages.xls or pages.xlsx file" );
+	}
+}
+
+
 
 // C:\Program Files (x86)\LibreOffice 4>"C:/Program Files (x86)/LibreOffice 4/program/soffice.exe" --headless --convert-to html --outdir C:/code/soffice/ C:/code/soffice/Robopedia.xls
 
